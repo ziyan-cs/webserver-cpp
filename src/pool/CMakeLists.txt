@@ -1,6 +1,6 @@
 # pool/CMakeLists.txt
 add_library(pool STATIC
-    # ThreadPool.cpp
+    ThreadPool.cpp
 )
 
 target_include_directories(pool PUBLIC

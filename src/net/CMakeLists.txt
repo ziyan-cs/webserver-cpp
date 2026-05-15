@@ -6,11 +6,6 @@ add_library(net STATIC
     # InetAddress.cpp
 )
 
-target_include_directories(net PUBLIC
-    ${PROJECT_SOURCE_DIR}/src
-)
-
 target_link_libraries(net PUBLIC
     core
-    log
 )

@@ -1,5 +1,5 @@
 add_library(log STATIC
-    # Logger.cpp
+    Logger.cpp
 )
 
 target_include_directories(log PUBLIC
