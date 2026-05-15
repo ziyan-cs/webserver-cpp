@@ -1,5 +1,5 @@
 add_library(config STATIC
-    # Config.cpp
+    Config.cpp
 )
 
 target_include_directories(config PUBLIC

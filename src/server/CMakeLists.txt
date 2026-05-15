@@ -1,6 +1,6 @@
 add_executable(webserver
-    # main.cpp
-    # TcpServer.cpp
+    main.cpp
+    TcpServer.cpp
 )
 
 target_include_directories(webserver PUBLIC

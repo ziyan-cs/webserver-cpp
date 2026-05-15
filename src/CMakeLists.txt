@@ -2,7 +2,7 @@
 # 底层模块
 # add_subdirectory(log)
 
-# add_subdirectory(config)
+add_subdirectory(config)
 
 # 核心事件循环
 # add_subdirectory(core)
