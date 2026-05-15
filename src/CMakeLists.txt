@@ -8,7 +8,7 @@ add_subdirectory(config)
 # add_subdirectory(core)
 
 # 网络模块
-# add_subdirectory(net)
+add_subdirectory(net)
 
 # 线程池
 # add_subdirectory(pool)
@@ -17,4 +17,4 @@ add_subdirectory(config)
 # add_subdirectory(http)
 
 # 最终服务器
-# add_subdirectory(server)
+add_subdirectory(server)
