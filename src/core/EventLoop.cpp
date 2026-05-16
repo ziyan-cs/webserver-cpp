@@ -11,18 +11,16 @@ EventLoop::EventLoop()
 
 void EventLoop::loop() {
     is_looping_ = true;
-    while (true) {
-        std::vector<epoll_event> revents = epoll_.wait(1000);
-    
-        for (epoll_event ev : revents) {
-            ev.data.ptr->handleEvent();
-        }
+    while (is_looping_) {
+        auto active_channels = epoll_.wait();
+        handleActiveChannels(active_channels);
     }
 }
 
-void EventLoop::handleActiveChannels() {
-
-
+void EventLoop::handleActiveChannels(std::vector<Channel*> active_channels) {
+    for (Channel* ch : active_channels) {
+        ch->handleEvent();
+    }
 }
 
 } // namespace webserver

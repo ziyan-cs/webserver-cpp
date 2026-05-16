@@ -1,12 +1,12 @@
 // core/Channel.h
 #pragma once
+#include "core/Epoll.h"
+
 #include <cstdint>
 #include <functional>
 #include <sys/epoll.h>
 
 namespace webserver {
-
-class Epoll;
 
 class Channel{
 public:

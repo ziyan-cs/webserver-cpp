@@ -55,15 +55,21 @@ void Epoll::delEvent(Channel* ch) {
 }
 
 std::vector<Channel*> Epoll::wait(int timeout) {
-    std::vector<Channel*> activeChannels;
+    std::vector<Channel*> active_channels;
     int num = ::epoll_wait(fd_, revents_.data(), revents_.size(), timeout);
+    if (num < 0) {
+        if (errno != EINTR) {
+            LOG_ERROR("epoll_wait() failed");
+        }
+        return {};
+    }
 
     for (int i = 0; i < num; ++i) {
         Channel* ch = static_cast<Channel*>(revents_[i].data.ptr);
         ch->setRevents(revents_[i].events);
-        activeChannels.push_back(ch);
+        active_channels.push_back(ch);
     }
-    return activeChannels;
+    return active_channels;
 }
 
 } // namespace webserver

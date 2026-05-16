@@ -17,7 +17,7 @@ public:
     Epoll* epoll() { return &epoll_; }
 
 private:
-    void handleActiveChannels();
+    void handleActiveChannels(std::vector<Channel*> active_channels);
 
     Epoll epoll_;
     bool is_looping_;
