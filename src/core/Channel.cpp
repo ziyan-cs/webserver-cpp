@@ -4,8 +4,8 @@
 
 namespace webserver {
 
-Channel::Channel(Epoll* epoll, int fd)
-    : epoll_(epoll),
+Channel::Channel(EventLoop* loop, int fd)
+    : loop_(loop),
       fd_(fd),
       events_(0),
       revents_(0),

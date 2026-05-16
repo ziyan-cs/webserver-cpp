@@ -1,6 +1,6 @@
 // core/Channel.h
 #pragma once
-#include "core/Epoll.h"
+#include "core/EventLoop.h"
 
 #include <cstdint>
 #include <functional>
@@ -13,7 +13,7 @@ public:
     // Event callback function type
     using EventCallback = std::function<void()>;
 
-    Channel(Epoll* epoll, int fd);
+    Channel(EventLoop* loop, int fd);
     ~Channel() = default;
 
     void handleEvent();
@@ -30,7 +30,7 @@ public:
     void disableWriting() { events_ &= ~EPOLLOUT; }
     void disableAll() { events_ = 0; }
 
-    void update() { epoll_->updateEvent(this); }
+    void update() { loop_->epoll()->updateEvent(this); }
 
     // Getters
     int fd() const { return fd_; }
@@ -42,7 +42,7 @@ public:
     void setRevents(uint32_t revents) { revents_ = revents; }
     void setInEpoll(bool in) { is_in_epoll_ = in; }
 private:
-    Epoll* epoll_;
+    EventLoop* loop_;
     int fd_;
 
     uint32_t events_;
