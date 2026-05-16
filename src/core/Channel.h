@@ -1,4 +1,5 @@
 // core/Channel.h
+#pragma once
 #include <cstdint>
 #include <functional>
 #include <sys/epoll.h>

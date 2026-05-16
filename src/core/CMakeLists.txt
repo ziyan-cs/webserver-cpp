@@ -1,7 +1,7 @@
 add_library(core STATIC
     Channel.cpp
     Epoll.cpp
-    # EventLoop.cpp
+    EventLoop.cpp
     # Timer.cpp
 )
 

@@ -16,7 +16,7 @@ public:
     void updateEvent(Channel* ch);
     void delEvent(Channel* ch);
 
-    std::vector<epoll_event> wait(int timeout = -1);
+    std::vector<Channel*> wait(int timeout = -1);
 private:
     static const int MAX_EVENTS = 1024;
     int fd_;
