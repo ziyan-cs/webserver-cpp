@@ -3,10 +3,22 @@
 #include "server/TcpServer.h"
 
 #include <vector>
+#include <algorithm>
+#include <errno.h>
 #include <unistd.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <fcntl.h>
+#include <signal.h>
+
+bool g_running = false;
+
+void signalHandler(int sig) {
+    if (sig == SIGINT) {
+        LOG_INFO("Received SIGINT, server shutting down gracefully...");
+        g_running = false;
+    }
+}
 
 namespace webserver {
 
@@ -31,18 +43,29 @@ void TcpServer::init() {
 }
 
 void TcpServer::run() {
+    signal(SIGINT, signalHandler);
+    g_running = true;
+
     int buffer_size = config_.bufferSize();
     std::vector<char> buffer(buffer_size);
 
-    while (true) {
+    while (g_running) {
         int connect_fd = listen_socket_.acceptSock();
-        if (connect_fd == -1) continue;
+        if (connect_fd == -1) {
+            if (errno == EINTR && !g_running) {
+                break;
+            }
+            continue;
+        }
         LOG_INFO("new client connected, fd=" << connect_fd);
         
-        while (true) {
+        while (g_running) {
             std::fill(buffer.begin(), buffer.end(), 0);
             ssize_t n = recv(connect_fd, buffer.data(), buffer_size, 0);
             if (n < 0) {
+                if (errno == EINTR && !g_running) {
+                    break;
+                }
                 LOG_ERROR("recv() failed for fd=" << connect_fd); 
                 ::close(connect_fd);
                 break;
@@ -56,7 +79,10 @@ void TcpServer::run() {
                 send(connect_fd, buffer.data(), n, 0);
             }
         }
+        ::close(connect_fd);
     }
+    ::close(listen_socket_.fd());
+    LOG_INFO("Server stopped");
 }
 
 } // namespace webserver
