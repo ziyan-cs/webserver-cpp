@@ -1,6 +1,7 @@
 // net/Acceptor.h
 #pragma once
 #include "net/Socket.h"
+#include "net/InetAddress.h"
 
 namespace webserver {
 
@@ -10,11 +11,13 @@ class Channel;
 
 class Acceptor {
 public:
-    Acceptor();
-    ~Acceptor() = delete;
+    Acceptor(EventLoop* loop, int fd);
+    ~Acceptor();
 
 
 private:
+    void handleAccept();
+
     EventLoop* loop_;
     int fd_;
     Channel* accept_channel_;
