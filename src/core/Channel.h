@@ -54,4 +54,4 @@ private:
     EventCallback errorCallback;
 };
 
-}
+} // namespace webserver

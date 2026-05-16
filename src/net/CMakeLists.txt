@@ -1,7 +1,7 @@
 add_library(net STATIC
     Socket.cpp
-    # Acceptor.cpp
-    # TcpConnection.cpp
+    Acceptor.cpp
+    TcpConnection.cpp
     # Buffer.h
     # InetAddress.cpp
 )

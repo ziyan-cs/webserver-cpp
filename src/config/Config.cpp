@@ -29,4 +29,4 @@ void Config::print() const {
     std::cout << "=======================" << '\n';
 }
 
-}
+} // namespace webserver
