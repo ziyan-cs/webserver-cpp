@@ -26,7 +26,7 @@ Epoll::~Epoll() {
     }
 }
 
-void Epoll::addEvent(Channel* ch) {
+void Epoll::updateEvent(Channel* ch) {
     struct epoll_event ev{};
     ev.events = ch->events();
     ev.data.ptr = ch;
@@ -59,7 +59,7 @@ std::vector<epoll_event> Epoll::wait(int timeout) {
 
     for (int i = 0; i < num; ++i) {
         Channel* ch = static_cast<Channel*>(revents_[i].data.ptr);
-        ch->setEvents(revents_[i].events);
+        ch->setRevents(revents_[i].events);
     }
     return revents_;
 }

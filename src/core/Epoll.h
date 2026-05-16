@@ -13,7 +13,7 @@ public:
     Epoll();
     ~Epoll();
 
-    void addEvent(Channel* ch);
+    void updateEvent(Channel* ch);
     void delEvent(Channel* ch);
 
     std::vector<epoll_event> wait(int timeout = -1);
