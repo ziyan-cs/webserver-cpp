@@ -8,9 +8,10 @@ namespace webserver {
 class Socket {
 public:
 	Socket();
+    Socket(int fd);
 	~Socket();
 
-    void bindSock(int pork, std::string ip);
+    void bindSock(int port, std::string ip);
     void listenSock(int backlg);
     int acceptSock();
 

@@ -1,4 +1,5 @@
 // log/Logger/h
+#pragma once
 #include <iostream>
 
 #define LOG_INFO(msg)  std::cout << "[INFO]  " << msg << '\n'

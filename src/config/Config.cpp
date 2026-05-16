@@ -6,8 +6,8 @@ namespace webserver {
 
 Config::Config()
     : port_(8080),
-      backlog_(),
-      buffer_size_(),
+      backlog_(5),
+      buffer_size_(1024),
       ip_("0.0.0.0")
 {
 }

@@ -17,6 +17,12 @@ Socket::Socket() {
     }
 }
 
+Socket::Socket(int fd)
+    : fd_(fd)
+{
+}
+
+
 Socket::~Socket() {
     if (fd_ != -1) {
         ::close(fd_);
@@ -54,12 +60,12 @@ int Socket::acceptSock() {
     struct sockaddr_in client_addr{};
     socklen_t client_len = sizeof(client_addr);
 
-    fd_ = ::accept(fd_, (struct sockaddr*)&client_addr, &client_len);
-    if (fd_ == -1) {
-        LOG_ERROR("accept() failed for fd=" << fd_);
+    int fd = ::accept(fd_, (struct sockaddr*)&client_addr, &client_len);
+    if (fd == -1) {
+        LOG_ERROR("accept() failed for fd=" << fd);
         return -1;
     }
-    return fd_;
+    return fd;
 }
 
 } // namespace webserver
