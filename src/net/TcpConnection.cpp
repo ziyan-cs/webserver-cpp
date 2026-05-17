@@ -44,12 +44,12 @@ void TcpConnection::handleRead() {
 void TcpConnection::handleWrite() {
     std::string msg = "Hello from server";
     size_t len = sizeof(msg);
-    size_t n = ::send(fd_, msg.data(), len -1, 0);
+    ssize_t n = ::send(fd_, msg.data(), len -1, 0);
  
     if (n < 0) {
         LOG_ERROR("send() failed for fd=" << fd_); 
         handleClose();
-    } else if (n = 0) {
+    } else if (n == 0) {
         LOG_ERROR("send() failed for fd=" << fd_);
         handleClose();
     } else {

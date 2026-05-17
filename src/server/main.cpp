@@ -4,7 +4,6 @@
 #include <iostream>
 
 int main() {
-    webserver::Config config;
     char choice;
     std::cout << "Whether to use default config?(y/n): ";
     std::cin >> choice;

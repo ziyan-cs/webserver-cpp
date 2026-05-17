@@ -15,19 +15,19 @@ Channel::Channel(EventLoop* loop, int fd)
 
 void Channel::handleEvent() {
     if (revents_ & EPOLLIN) {
-        if (readCallback) readCallback();
+        if (readCallback_) readCallback_();
     }
 
     if (revents_ & EPOLLOUT) {
-        if (writeCallback) writeCallback();
+        if (writeCallback_) writeCallback_();
     }
 
     if (revents_ & (EPOLLERR | EPOLLHUP)) {
-        if (errorCallback) errorCallback();
+        if (errorCallback_) errorCallback_();
     }
 
     if (revents_ & EPOLLRDHUP) {
-        if (closeCallback) closeCallback();
+        if (closeCallback_) closeCallback_();
     }
 }
     

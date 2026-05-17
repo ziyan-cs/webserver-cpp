@@ -56,16 +56,4 @@ void Socket::listenSock(int backlog) {
     }
 }
 
-int Socket::acceptSock() {
-    struct sockaddr_in client_addr{};
-    socklen_t client_len = sizeof(client_addr);
-
-    int fd = ::accept(fd_, (struct sockaddr*)&client_addr, &client_len);
-    if (fd == -1) {
-        LOG_ERROR("accept() failed for fd=" << fd);
-        return -1;
-    }
-    return fd;
-}
-
 } // namespace webserver

@@ -19,10 +19,10 @@ public:
     void handleEvent();
 
     // Set callback functions
-    void setReadCallback(EventCallback cb) { readCallback = std::move(cb); }
-    void setWriteCallback(EventCallback cb) { writeCallback = std::move(cb); }
-    void setCloseCallback(EventCallback cb) { closeCallback = std::move(cb); }
-    void setErrorCallback(EventCallback cb) { errorCallback = std::move(cb); }
+    void setReadCallback(EventCallback cb) { readCallback_ = std::move(cb); }
+    void setWriteCallback(EventCallback cb) { writeCallback_ = std::move(cb); }
+    void setCloseCallback(EventCallback cb) { closeCallback_ = std::move(cb); }
+    void setErrorCallback(EventCallback cb) { errorCallback_ = std::move(cb); }
 
     void enableReading() { events_ |= EPOLLIN; }
     void enableWriting() { events_ |= EPOLLOUT; }
@@ -30,7 +30,7 @@ public:
     void disableWriting() { events_ &= ~EPOLLOUT; }
     void disableAll() { events_ = 0; }
 
-    void update() { loop_->epoll()->updateEvent(this); }
+    void update() { loop_->updateChannels(this); }
 
     // Getters
     int fd() const { return fd_; }
@@ -49,10 +49,10 @@ private:
     uint32_t revents_;
     bool is_in_epoll_;
 
-    EventCallback readCallback;
-    EventCallback writeCallback;
-    EventCallback closeCallback;
-    EventCallback errorCallback;
+    EventCallback readCallback_;
+    EventCallback writeCallback_;
+    EventCallback closeCallback_;
+    EventCallback errorCallback_;
 };
 
 } // namespace webserver

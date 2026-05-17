@@ -13,7 +13,6 @@ public:
 
     void bindSock(int port, std::string ip);
     void listenSock(int backlg);
-    int acceptSock();
 
     // Getters
     int fd() const { return fd_; }
