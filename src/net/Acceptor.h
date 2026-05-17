@@ -1,5 +1,6 @@
 // net/Acceptor.h
 #pragma once
+#include "net/InetAddress.h"
 #include "net/Socket.h"
 #include "net/InetAddress.h"
 
@@ -11,15 +12,15 @@ class Channel;
 
 class Acceptor {
 public:
-    Acceptor(EventLoop* loop, int fd);
+    Acceptor(EventLoop* loop, int fd, const InetAddress& addr);
     ~Acceptor();
-
 
 private:
     void handleAccept();
 
     EventLoop* loop_;
     int fd_;
+    InetAddress addr_;
     Channel* accept_channel_;
 };
 
