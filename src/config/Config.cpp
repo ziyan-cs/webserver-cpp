@@ -4,29 +4,14 @@
 
 namespace webserver {
 
-Config::Config()
-    : port_(8080),
-      backlog_(5),
-      buffer_size_(1024),
-      ip_("0.0.0.0")
-{
-}
+ssize_t BUFSIZE = 1024;
+int MAX_EVENTS = 1024;
+int LISTEN_BACKLOG = 128;
 
-Config::Config(int port, int backlog, int buffer_size, std::string ip)
-    : port_(port),
-      backlog_(backlog),
-      buffer_size_(buffer_size),
-      ip_(ip)
-{
-}
-
-void Config::print() const {
-    std::cout << "=====Configuration=====" << '\n';
-    std::cout << "Port = " << port_ << '\n';
-    std::cout << "Backlog = " << backlog_ << '\n';
-    std::cout << "Buffer Size = " << buffer_size_ << '\n';
-    std::cout << "Server IP = " << ip_ << '\n';
-    std::cout << "=======================" << '\n';
+void config(ssize_t buffer_size, int max_events, int listen_backlog){
+    BUFSIZE = buffer_size;
+    MAX_EVENTS = max_events;
+    LISTEN_BACKLOG = listen_backlog;
 }
 
 } // namespace webserver

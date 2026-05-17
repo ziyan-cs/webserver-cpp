@@ -18,7 +18,6 @@ public:
 
     std::vector<Channel*> wait(int timeout = -1);
 private:
-    static const int MAX_EVENTS = 1024;
     int fd_;
     std::vector<epoll_event> revents_;
 };

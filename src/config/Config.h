@@ -1,33 +1,12 @@
 // config/Config.h
 #pragma once
-#include <string>
 
 namespace webserver {
 
-class Config {
-public:
-    Config();
-    Config(int port, int backlog, int buffer_size, std::string ip);
+extern size_t BUFFER_SIZE;
+extern int MAX_EVENTS;
+extern int LISTEN_BACKLOG;
 
-    // Getters
-    int port() const { return port_; }
-    int backlog() const { return backlog_; }
-    int bufferSize() const { return buffer_size_; }\
-    std::string ip() const { return ip_; }
-
-    // Setters
-    void setPort(int port) { port_ = port; }
-    void setBacklog(int backlog) { backlog_ = backlog; }
-    void setBufferSize(int buffer_size) { buffer_size_ = buffer_size; }
-    void setIp(std::string ip) { ip_ = ip; }
-
-    // Debug
-    void print() const;
-private:
-    int port_;
-    int backlog_;
-    int buffer_size_;
-    std::string ip_;
-};
+void config(ssize_t buffer_size, int max_events, int listen_backlog);
 
 } // namespace webserver

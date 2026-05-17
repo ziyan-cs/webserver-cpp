@@ -1,5 +1,6 @@
 // core/Epoll.cpp
 #include "log/Logger.h"
+#include "config/Config.h"
 #include "core/Epoll.h"
 #include "core/Channel.h"
 
@@ -16,7 +17,7 @@ Epoll::Epoll() {
         LOG_ERROR("epoll_create1() failed");
         exit(EXIT_FAILURE);
     }
-    revents_.resize(MAX_EVENTS);
+    revents_.resize(webserver::MAX_EVENTS);
 }
 
 Epoll::~Epoll() {
