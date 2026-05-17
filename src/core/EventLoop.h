@@ -16,6 +16,9 @@ public:
 
     Epoll* epoll() { return &epoll_; }
 
+    void updateChannels(Channel* ch) { epoll_.updateEvent(ch); }
+    void delChannels(Channel* ch) { epoll_.delEvent(ch); }
+
 private:
     void handleActiveChannels(std::vector<Channel*> active_channels);
 

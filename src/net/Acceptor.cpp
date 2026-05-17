@@ -11,6 +11,7 @@ Acceptor::Acceptor(EventLoop* loop, int fd, const InetAddress& addr)
 {
     accept_channel_ = new Channel(loop_, fd_);
     accept_channel_->setReadCallback(std::bind(&Acceptor::handleAccept, this));
+    accept_channel_->enableReading();
 }
 
 Acceptor::~Acceptor() {
@@ -21,13 +22,14 @@ Acceptor::~Acceptor() {
 }
 
 void Acceptor::handleAccept() {
-    InetAddress client_addr;
-    socklen_t len = sizeof(client_addr);
+    InetAddress connect_addr;
+    socklen_t len = sizeof(connect_addr);
 
-    int client_fd = ::accept(fd_, client_addr.sockAddr(), &len);
-    if (client_fd == -1) {
-        LOG_ERROR("accept() failed for fd=" << client_fd);
+    int connect_fd = ::accept(fd_, connect_addr.sockAddr(), &len);
+    if (connect_fd == -1) {
+        LOG_ERROR("accept() failed for fd=" << connect_fd);
     }
+
 }
 
 } // namespace webserver

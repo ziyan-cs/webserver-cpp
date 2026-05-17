@@ -59,9 +59,7 @@ void TcpConnection::handleWrite() {
 
 void TcpConnection::handleClose() {
     LOG_INFO("client close connection, fd=" << fd_);
-
-    loop_->epoll_.delEvent(connect_channel_);
-
+    loop_->delChannels(connect_channel_);
 }
 
 } // namespace webserver
