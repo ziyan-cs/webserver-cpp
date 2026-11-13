@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: ${{ matrix.compiler }} build and test
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [gcc, clang]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y cmake ninja-build clang
+
+      - name: Configure
+        run: >-
+          cmake -S . -B build/${{ matrix.compiler }} -G Ninja
+          -DCMAKE_BUILD_TYPE=Debug
+          -DCMAKE_CXX_COMPILER=${{ matrix.compiler == 'clang' && 'clang++' || 'g++' }}
+
+      - name: Build
+        run: cmake --build build/${{ matrix.compiler }} --parallel
+
+      - name: Test
+        run: ctest --test-dir build/${{ matrix.compiler }} --output-on-failure
+
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y cmake ninja-build clang clang-format clang-tidy
+
+      - name: Configure clang-tidy database
+        run: >-
+          cmake -S . -B build/clang-tidy -G Ninja
+          -DCMAKE_BUILD_TYPE=Debug
+          -DCMAKE_CXX_COMPILER=clang++
+
+      - name: Check formatting
+        run: >-
+          find src tests -type f
+          \( -name '*.c' -o -name '*.cc' -o -name '*.cpp' -o -name '*.cxx'
+          -o -name '*.h' -o -name '*.hpp' -o -name '*.hxx' \)
+          -print0 | xargs -r -0 clang-format --dry-run --Werror
+
+      - name: Run clang-tidy
+        run: run-clang-tidy -p build/clang-tidy
