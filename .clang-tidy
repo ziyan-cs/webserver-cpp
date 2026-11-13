@@ -1,0 +1,29 @@
+# ─── 检查项 ───────────────────────────────────────────────────
+Checks: >
+  -*,
+  bugprone-*,
+  -bugprone-easily-swappable-parameters,
+  modernize-*,
+  -modernize-use-trailing-return-type,
+  -modernize-avoid-c-arrays,
+  performance-*,
+  -performance-avoid-endl,
+  cppcoreguidelines-pro-type-*,
+  cppcoreguidelines-slicing,
+  cppcoreguidelines-no-malloc,
+  cppcoreguidelines-prefer-member-initializer,
+  readability-container-size-empty,
+  readability-implicit-bool-conversion,
+  readability-redundant-*,
+  misc-*,
+  -misc-include-cleaner,
+  -misc-const-correctness,
+  -misc-no-recursion,
+  -misc-non-private-member-variables-in-classes,
+  google-explicit-constructor,
+  google-readability-casting,
+
+# ─── 检查选项 ─────────────────────────────────────────────────
+CheckOptions:
+  - key: bugprone-argument-comment.StrictMode
+    value: true
