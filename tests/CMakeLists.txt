@@ -1,12 +1,12 @@
-add_executable(config_test config_test.cpp)
-target_link_libraries(config_test PRIVATE base)
+function(add_project_test name source library)
+  add_executable(${name} ${source})
+  target_link_libraries(${name} PRIVATE ${library})
+  set_target_properties(${name} PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/tests"
+  )
+  add_test(NAME ${name} COMMAND ${name})
+endfunction()
 
-add_test(NAME config_test COMMAND config_test)
-
-add_executable(logger_test logger_test.cpp)
-target_link_libraries(logger_test PRIVATE base)
-add_test(NAME logger_test COMMAND logger_test)
-
-set_target_properties(config_test logger_test PROPERTIES
-  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/tests"
-)
+add_project_test(config_test config_test.cpp base)
+add_project_test(logger_test logger_test.cpp base)
+add_project_test(core_test core_test.cpp core)
