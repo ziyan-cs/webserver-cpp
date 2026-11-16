@@ -2,9 +2,9 @@
 
 #include <cerrno>
 #include <stdexcept>
+#include <system_error>
 #include <unistd.h>
 
-#include "base/Config.h"
 #include "base/Logger.h"
 
 namespace net {
@@ -13,29 +13,25 @@ void Acceptor::start() {
   if (started_)
     return;
 
-  if (!listening_) {
-    socket_->reuseAddr(true);
-    socket_->bind(addr_);
-    socket_->listen(base::Config::instance().backlog());
-    listening_ = true;
-  }
-
-  channel_->setOnRead([this] { handleRead(); });
-  channel_->setOnClose([this] { stop(); });
   channel_->enableReading();
-  if (!channel_->update())
-    throw std::runtime_error("Failed to register acceptor channel");
+  if (!channel_->update()) {
+    throw std::runtime_error("Acceptor::start: channel update failed, fd=" +
+                             std::to_string(socket_->fd()));
+  }
   started_ = true;
 }
 
 void Acceptor::stop() {
   if (!started_)
     return;
+
   channel_->disableReading();
   bool removed = channel_->remove();
   started_ = false;
   if (!removed)
-    base::Logger::instance().log(base::Logger::LogLevel::ERROR, "Failed to remove acceptor channel");
+    base::Logger::instance().log(
+        base::Logger::LogLevel::ERROR,
+        "Acceptor::stop: channel removal failed, fd=" + std::to_string(socket_->fd()));
 }
 
 void Acceptor::handleRead() {
@@ -43,18 +39,19 @@ void Acceptor::handleRead() {
     InetAddress peer_addr;
     int fd = socket_->accept(&peer_addr);
 
-    if (fd < 0) {
-      if (errno == EINTR)
-        continue;
-      if (errno != EAGAIN && errno != EWOULDBLOCK)
-        base::Logger::instance().log(base::Logger::LogLevel::ERROR, "Failed to accept connection");
+    if (fd >= 0) {
+      auto socket = std::make_unique<Socket>(fd);
+      if (new_conn_cb_)
+        new_conn_cb_(std::move(socket), peer_addr);
+    } else if (errno == EINTR) {
+      continue;
+    } else if (errno == EAGAIN || errno == EWOULDBLOCK) {
       break;
+    } else {
+      const int error = errno;
+      throw std::system_error(error, std::generic_category(),
+                              "Acceptor::handleRead fd=" + std::to_string(socket_->fd()));
     }
-
-    if (new_conn_cb_)
-      new_conn_cb_(fd, peer_addr);
-    else
-      ::close(fd);
   }
 }
 

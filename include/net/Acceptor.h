@@ -3,6 +3,7 @@
 #include <functional>
 #include <memory>
 
+#include "base/Config.h"
 #include "core/Channel.h"
 #include "core/EventLoop.h"
 #include "net/InetAddress.h"
@@ -15,14 +16,30 @@ class Acceptor {
   static const int kMaxAcceptorPerLoop = 128;
 
   // The callback takes ownership of the accepted fd.
-  using NewConnectionCallback = std::function<void(int fd, const InetAddress addr)>;
+  using NewConnectionCallback =
+      std::function<void(std::unique_ptr<Socket> socket, const InetAddress& addr)>;
 
   Acceptor(core::EventLoop* loop, const InetAddress& addr)
       : addr_(addr),
         loop_(loop),
         socket_(std::make_unique<Socket>()),
-        channel_(std::make_unique<core::Channel>(socket_->fd(), loop_)) {}
-  ~Acceptor() = default;
+        channel_(std::make_unique<core::Channel>(socket_->fd(), loop_)) {
+    socket_->reuseAddr(true);
+    socket_->bind(addr_);
+    socket_->listen(base::Config::instance().backlog());
+    channel_->setOnRead([this] { handleRead(); });
+    channel_->setOnClose([this] { stop(); });
+  }
+  ~Acceptor() {
+    channel_->setOnRead({});
+    channel_->setOnClose({});
+  }
+
+  // Neither copyable nor movable.
+  Acceptor(const Acceptor&) = delete;
+  Acceptor& operator=(const Acceptor&) = delete;
+  Acceptor(Acceptor&&) = delete;
+  Acceptor& operator=(Acceptor&&) = delete;
 
   void setOnNewConnection(NewConnectionCallback cb) { new_conn_cb_ = std::move(cb); }
 
