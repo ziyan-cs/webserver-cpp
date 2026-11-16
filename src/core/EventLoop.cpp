@@ -40,7 +40,7 @@ bool EventLoop::removeChannel(Channel* ch) {
 
 void EventLoop::loop() {
   if (is_looping_)
-    throw std::logic_error("EventLoop::loop() is already running");
+    throw std::logic_error("EventLoop::loop already running");
 
   is_looping_ = true;
   quit_ = false;
@@ -55,6 +55,9 @@ void EventLoop::loop() {
         it->second->handleEvent();
       }
     }
+    // Can only process one server at a time via a loop.
+    if (erase_cb_)
+      erase_cb_();
   }
 }
 
