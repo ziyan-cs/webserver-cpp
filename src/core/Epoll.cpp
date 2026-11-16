@@ -9,7 +9,7 @@ namespace core {
 Epoll::Epoll() : fd_(epoll_create1(EPOLL_CLOEXEC)) {
   if (fd_ < 0) {
     const int error = errno;
-    throw std::system_error(error, std::generic_category(), "epoll_create1");
+    throw std::system_error(error, std::generic_category(), "Epoll::Epoll");
   }
 }
 
@@ -46,13 +46,17 @@ std::vector<epoll_event> Epoll::wait(int time_out_ms) {
   events_.resize(64);
   while (true) {
     int n = ::epoll_wait(fd_, events_.data(), static_cast<int>(events_.size()), time_out_ms);
-    if (n < 0) {
-      if (errno != EINTR)
-        return {};
+    if (n > 0) {
+      events_.resize(n);
+      return events_;
+    } else if (n == 0) {
+      return {};
+    } else if (errno == EINTR) {
       continue;
+    } else {
+      const int error = errno;
+      throw std::system_error(error, std::generic_category(), "Epoll::wait");
     }
-    events_.resize(n);
-    return events_;
   }
 }
 
