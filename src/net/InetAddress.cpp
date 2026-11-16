@@ -14,7 +14,7 @@ InetAddress::InetAddress(const std::string& ip, uint16_t port) {
     throw std::invalid_argument("Invalid IPv4 address: " + ip);
   } else if (ret == -1) {
     const int error = errno;
-    throw std::system_error(error, std::generic_category(), "inet_pton");
+    throw std::system_error(error, std::generic_category(), "InetAddress::InetAddress");
   }
 }
 
@@ -24,7 +24,7 @@ InetAddress::InetAddress(const std::string& ip, uint16_t port) {
   const char* ret = inet_ntop(AF_INET, &addr_.sin_addr, buf, sizeof(buf));
   if (ret == nullptr) {
     const int error = errno;
-    throw std::system_error(error, std::generic_category(), "inet_ntop");
+    throw std::system_error(error, std::generic_category(), "InetAddress::ip");
   }
 
   return buf;

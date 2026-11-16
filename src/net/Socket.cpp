@@ -10,7 +10,7 @@ namespace net {
 Socket::Socket() : fd_(socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0)) {
   if (fd_ < 0) {
     const int error = errno;
-    throw std::system_error(error, std::generic_category(), "epoll_create1");
+    throw std::system_error(error, std::generic_category(), "Socket::Socket");
   }
 }
 
@@ -18,7 +18,8 @@ void Socket::bind(const InetAddress& local_addr) {
   int ret = ::bind(fd_, local_addr.sockAddr(), local_addr.sockAddrLen());
   if (ret < 0) {
     const int error = errno;
-    throw std::system_error(error, std::generic_category(), "bind");
+    throw std::system_error(error, std::generic_category(),
+                            "Socket::bind fd=" + std::to_string(fd_));
   }
 }
 
@@ -26,7 +27,8 @@ void Socket::listen(int backlog) {
   int ret = ::listen(fd_, backlog);
   if (ret < 0) {
     const int error = errno;
-    throw std::system_error(error, std::generic_category(), "bind");
+    throw std::system_error(error, std::generic_category(),
+                            "Socket::listen fd=" + std::to_string(fd_));
   }
 }
 
@@ -42,16 +44,22 @@ int Socket::accept(InetAddress* peer_addr) {
 }
 
 void Socket::reuseAddr(bool on) {
-  if (on) {
-    int opt = -1;
-    setsockopt(fd_, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+  int opt = on ? 1 : 0;
+  int ret = setsockopt(fd_, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+  if (ret < 0) {
+    const int error = errno;
+    throw std::system_error(error, std::generic_category(),
+                            "Socket::reuseAddr fd=" + std::to_string(fd_));
   }
 }
 
 void Socket::reusePort(bool on) {
-  if (on) {
-    int opt = -1;
-    setsockopt(fd_, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt));
+  int opt = on ? 1 : 0;
+  int ret = setsockopt(fd_, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt));
+  if (ret < 0) {
+    const int error = errno;
+    throw std::system_error(error, std::generic_category(),
+                            "Socket::reusePort fd=" + std::to_string(fd_));
   }
 }
 
