@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <unordered_map>
 
 namespace core {
@@ -12,6 +13,8 @@ class Epoll;
 // The epoll instance and registered channels must remain valid while in use.
 class EventLoop {
  public:
+  using EraseCallback = std::function<void()>;
+
   explicit EventLoop(Epoll* epoll) : epoll_(epoll) {}
   ~EventLoop() = default;
 
@@ -20,6 +23,8 @@ class EventLoop {
   EventLoop& operator=(const EventLoop&) = delete;
   EventLoop(EventLoop&&) = delete;
   EventLoop& operator=(EventLoop&&) = delete;
+
+  void setOnErase(EraseCallback cb) { erase_cb_ = std::move(cb); };
 
   // Manage event channels.
   bool updateChannel(Channel* ch);
@@ -35,6 +40,7 @@ class EventLoop {
   std::unordered_map<int, Channel*> channels_;
   bool is_looping_ = false;
   bool quit_ = false;
+  EraseCallback erase_cb_;
 };
 
 }  // namespace core
